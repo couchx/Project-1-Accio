@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   string input;
   char buf[20] = {0};
   stringstream ss;
-  ifstream myfile ("testfile.txt");
+  ifstream myfile (filename);
   while (!isEnd) {
     memset(buf, '\0', sizeof(buf));
 

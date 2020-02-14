@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 using namespace std;
 int main(int argc, char** argv)
 {
@@ -75,23 +76,27 @@ int main(int argc, char** argv)
   // read/write data from/into the connection
   bool isEnd = false;
   char buf[20] = {0};
-  std::stringstream ss;
-
+  stringstream ss;
+  string path = filename;
+  cout << path << endl;
+  ofstream file(path);
   while (!isEnd) {
     memset(buf, '\0', sizeof(buf));
 
-    if (recv(clientSockfd, buf, 20, 0) == -1) {
-      perror("recv");
-      return 5;
+    if(file.is_open())
+    {
+      if (recv(clientSockfd, buf, 20, 0) == -1) {
+        perror("recv");
+        return 5;
+      }
+      file << buf;
+      cout << "here";
+      if (send(clientSockfd, buf, 20, 0) == -1) {
+        perror("send");
+        return 6;
+      }
     }
-
-    ss << buf << std::endl;
-    std::cout << buf << std::endl;
-
-    if (send(clientSockfd, buf, 20, 0) == -1) {
-      perror("send");
-      return 6;
-    }
+    
 
     if (ss.str() == "close\n")
       break;
