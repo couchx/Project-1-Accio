@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 using namespace std;
 
 int main(int argc, char** argv)
@@ -48,7 +49,7 @@ int main(int argc, char** argv)
   struct sockaddr_in serverAddr;
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_port = htons(portno);     // short, network byte order
-  serverAddr.sin_addr.s_addr = inet_addr(hostname);
+  serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
   memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
 
   // connect to the server
@@ -72,33 +73,38 @@ int main(int argc, char** argv)
 
   // send/receive data to/from connection
   bool isEnd = false;
-  std::string input;
+  string input;
   char buf[20] = {0};
-  std::stringstream ss;
-
+  stringstream ss;
+  ifstream myfile ("testfile.txt");
   while (!isEnd) {
     memset(buf, '\0', sizeof(buf));
 
-    std::cout << "send: ";
-    std::cin >> input;
-    if (send(sockfd, input.c_str(), input.size(), 0) == -1) {
+    cout << "send: ";
+    if(myfile.is_open())
+    {
+      cout << "here123";
+      while(getline(myfile, input))
+      {
+        cout << input <<'\n';
+        if (send(sockfd, input.c_str(), input.size(), 0) == -1) {
+          perror("send");
+          return 4;
+        }
+      }
+      myfile.close();
+    }
+    cin >> input;
+  /*  if (send(sockfd, input.c_str(), input.size(), 0) == -1) {
       perror("send");
       return 4;
-    }
+    }*/
 
 
     if (recv(sockfd, buf, 20, 0) == -1) {
       perror("recv");
       return 5;
     }
-    ss << buf << std::endl;
-    std::cout << "echo: ";
-    std::cout << buf << std::endl;
-
-    if (ss.str() == "close\n")
-      break;
-
-    ss.str("");
   }
 
   close(sockfd);
