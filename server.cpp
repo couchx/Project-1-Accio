@@ -9,10 +9,26 @@
 
 #include <iostream>
 #include <sstream>
-
-int
-main()
+using namespace std;
+int main(int argc, char** argv)
 {
+  int portno;
+  string filename;
+  if(argc < 3)
+  {
+    cout << "You have not entered a port number or a file directory to save the file to\n";
+    exit(0);
+  }
+  else
+  {
+    portno = atoi(argv[1]);
+    if(portno < 1024)
+    {
+      cout << "The portno you have entered is not valid please try again." << endl;
+      exit(0);
+    }
+    filename = argv[2];
+  }
   // create a socket using TCP IP
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -26,7 +42,7 @@ main()
   // bind address to socket
   struct sockaddr_in addr;
   addr.sin_family = AF_INET;
-  addr.sin_port = htons(40000);     // short, network byte order
+  addr.sin_port = htons(portno);     // short, network byte order
   addr.sin_addr.s_addr = inet_addr("127.0.0.1");
   memset(addr.sin_zero, '\0', sizeof(addr.sin_zero));
 
