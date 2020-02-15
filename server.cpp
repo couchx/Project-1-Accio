@@ -75,33 +75,20 @@ int main(int argc, char** argv)
 
   // read/write data from/into the connection
   bool isEnd = false;
-  char buf[20] = {0};
+  char buf[2000000] = {0};
+  string input;
   stringstream ss;
   string path = filename;
   cout << path << endl;
   ofstream file(path);
+  file.is_open()
   while (!isEnd) {
     memset(buf, '\0', sizeof(buf));
 
-    if(file.is_open())
+    while((recv(clientSockfd, buf, sizeof(buf), 0))
     {
-      if (recv(clientSockfd, buf, 20, 0) == -1) {
-        perror("recv");
-        return 5;
-      }
       file << buf;
-      cout << "here";
-      if (send(clientSockfd, buf, 20, 0) == -1) {
-        perror("send");
-        return 6;
-      }
     }
-    
-
-    if (ss.str() == "close\n")
-      break;
-
-    ss.str("");
   }
 
   close(clientSockfd);

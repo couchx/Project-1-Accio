@@ -74,27 +74,29 @@ int main(int argc, char** argv)
   // send/receive data to/from connection
   bool isEnd = false;
   string input;
-  char buf[20] = {0};
+  char buf[2000000] = {0};
   stringstream ss;
   ifstream myfile (filename);
   while (!isEnd) {
     memset(buf, '\0', sizeof(buf));
 
-    cout << "send: ";
     if(myfile.is_open())
     {
-      cout << "here123";
+      cout << "ere" << endl;
       while(getline(myfile, input))
       {
-        cout << input <<'\n';
         if (send(sockfd, input.c_str(), input.size(), 0) == -1) {
           perror("send");
           return 4;
         }
+        if (recv(sockfd, buf, sizeof(buf), 0) == -1) {
+          perror("recv");
+          return 5;
+        }
       }
       myfile.close();
     }
-    cin >> input;
+  //  cin >> input;
   /*  if (send(sockfd, input.c_str(), input.size(), 0) == -1) {
       perror("send");
       return 4;
